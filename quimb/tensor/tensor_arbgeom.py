@@ -194,6 +194,10 @@ def tensor_network_apply_op_vec(
         if fuse_multibonds:
             x.fuse_multibonds_()
 
+    # Only change in the method, for when some node of the MPO does not contract with the MPS. The MPS index needs to be renamed
+    # back to the original index. 
+    x = x.reindex({inner_ind_id.format(i): x.site_ind_id.format(i) for i in sites_present_in_A}, inplace=inplace)
+    
     # optionally compress
     if compress:
         x.compress(**compress_opts)
@@ -274,20 +278,28 @@ def tensor_network_apply_op_op(
         #
         A.lower_ind_id = inner_ind_id
         A.upper_ind_id = B.upper_ind_id
-        B.reindex_upper_sites_(inner_ind_id)
+        # B.reindex_upper_sites_(inner_ind_id)
+        B = B.reindex({B.upper_ind_id.format(i): inner_ind_id.format(i) for i in range(0, B.L)}, inplace = False)
+
     elif (which_A, which_B) == ("lower", "lower"):
         # rest are just permutations of above ...
         A.lower_ind_id = inner_ind_id
         A.upper_ind_id = B.lower_ind_id
-        B.reindex_lower_sites_(inner_ind_id)
+        # B.reindex_lower_sites_(inner_ind_id)
+        B = B.reindex({B.lower_ind_id.format(i): inner_ind_id.format(i) for i in range(0, B.L)}, inplace = False)
+
     elif (which_A, which_B) == ("upper", "upper"):
         A.upper_ind_id = inner_ind_id
         A.lower_ind_id = B.upper_ind_id
-        B.reindex_upper_sites_(inner_ind_id)
+        # B.reindex_upper_sites_(inner_ind_id)
+        B = B.reindex({B.upper_ind_id.format(i): inner_ind_id.format(i) for i in range(0, B.L)}, inplace = False)
+
     elif (which_A, which_B) == ("upper", "lower"):
         A.upper_ind_id = inner_ind_id
         A.lower_ind_id = B.lower_ind_id
-        B.reindex_lower_sites_(inner_ind_id)
+        # B.reindex_lower_sites_(inner_ind_id)
+        B = B.reindex({B.lower_ind_id.format(i): inner_ind_id.format(i) for i in range(0, B.L)}, inplace = False)
+
     else:
         raise ValueError("Invalid `which_A` and `which_B` combination.")
 
@@ -304,6 +316,11 @@ def tensor_network_apply_op_op(
 
     if compress:
         B.compress(**compress_opts)
+
+    if which_B == "upper":
+        B = B.reindex({inner_ind_id.format(i): B.upper_ind_id.format(i) for i in B.gen_sites_present()}, inplace=inplace)
+    if which_B == "lower":
+        B = B.reindex({inner_ind_id.format(i): B.lower_ind_id.format(i) for i in B.gen_sites_present()}, inplace=inplace)
 
     return B
 

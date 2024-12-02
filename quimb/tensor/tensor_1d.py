@@ -4200,7 +4200,11 @@ class MatrixProductOperator(TensorNetwork1DOperator, TensorNetwork1DFlat):
             left, right, upper and lower (down) indices respectively.
         """
         for i in self.gen_sites_present():
-            inds = {"u": self.upper_ind(i), "d": self.lower_ind(i)}
+            temp = self[i]
+            if len(temp._inds) == 2:
+                inds = {}
+            else:
+                inds = {"u": self.upper_ind(i), "d": self.lower_ind(i)}
             if self.cyclic or i > 0:
                 inds["l"] = self.bond(i, (i - 1) % self.L)
             if self.cyclic or i < self.L - 1:
