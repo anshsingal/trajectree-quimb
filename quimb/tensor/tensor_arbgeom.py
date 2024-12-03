@@ -264,6 +264,7 @@ def tensor_network_apply_op_op(
     coordinate_formatter = get_coordinate_formatter(A._NDIMS)
     inner_ind_id = rand_uuid() + f"{coordinate_formatter}"
 
+    # Evaluates A @ B
     if (which_A, which_B) == ("lower", "upper"):
         # align the indices (by default lower of A joined with upper of B
         # which corresponds to matrix multiplication):
@@ -276,11 +277,14 @@ def tensor_network_apply_op_op(
         #    -B- ...
         #     |       <- B lower_ind_id to be lower_ind_id
         #
+        
         A.lower_ind_id = inner_ind_id
         A.upper_ind_id = B.upper_ind_id
         # B.reindex_upper_sites_(inner_ind_id)
         B = B.reindex({B.upper_ind_id.format(i): inner_ind_id.format(i) for i in range(0, B.L)}, inplace = False)
 
+    # Evaluates B @ A.T (You first flip B to give you A @ B.T, but when you put the upper of A to be the lower inds of B, you 
+    # you are transposing the entire MPS, to give you B @ A.T). 
     elif (which_A, which_B) == ("lower", "lower"):
         # rest are just permutations of above ...
         A.lower_ind_id = inner_ind_id
@@ -288,12 +292,15 @@ def tensor_network_apply_op_op(
         # B.reindex_lower_sites_(inner_ind_id)
         B = B.reindex({B.lower_ind_id.format(i): inner_ind_id.format(i) for i in range(0, B.L)}, inplace = False)
 
+    # Evaluates A.T @ B
     elif (which_A, which_B) == ("upper", "upper"):
         A.upper_ind_id = inner_ind_id
         A.lower_ind_id = B.upper_ind_id
         # B.reindex_upper_sites_(inner_ind_id)
         B = B.reindex({B.upper_ind_id.format(i): inner_ind_id.format(i) for i in range(0, B.L)}, inplace = False)
 
+    # Evaluates B @ A (You first multiply A.T and B.T and then when you put the lower inds of A to be the lower of B, you are essentially taking
+    # the transpose of the entire thing, giving you B @ A as an output). 
     elif (which_A, which_B) == ("upper", "lower"):
         A.upper_ind_id = inner_ind_id
         A.lower_ind_id = B.lower_ind_id
