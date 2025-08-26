@@ -1,9 +1,9 @@
 [project]
-name = "quimb"
-description = "Quantum information and many-body library."
+name = "trajectree-quimb"
+description = "Modified version of the Quimb library to work with the Trajectree Quantum optics simulator."
 readme = { file = "README.md", content-type = "text/markdown" }
-dynamic = ["version"]
-authors = [{ name = "Johnnie Gray", email = "johnniemcgray@gmail.com" }]
+version = "0.0.1"
+authors = [{ name = "Ansh Singal", email = "asingal@u.northwestern.edu" }]
 license = { text = "Apache-2.0" }
 classifiers = [
     "Development Status :: 3 - Alpha",
