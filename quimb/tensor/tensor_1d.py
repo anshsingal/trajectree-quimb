@@ -1,4 +1,5 @@
 """Classes and algorithms related to 1D tensor networks."""
+"""Modified by Ansh Singal to work with qudit simulations"""
 
 import functools
 import itertools
