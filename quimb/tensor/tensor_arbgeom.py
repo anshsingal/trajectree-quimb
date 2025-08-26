@@ -1,4 +1,5 @@
 """Classes and algorithms related to arbitrary geometry tensor networks."""
+"""Modified by Ansh Singal to work with qudit simulations"""
 
 import functools
 from operator import add, mul
