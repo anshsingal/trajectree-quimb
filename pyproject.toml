@@ -69,10 +69,8 @@ docs = [
 ]
 
 [project.urls]
-"Documentation" = "https://quimb.readthedocs.io/"
-"Repository" = "https://github.com/jcmgray/quimb/"
-"Issues" = "https://github.com/jcmgray/quimb/issues"
-"Changelog" = "https://quimb.readthedocs.io/en/latest/changelog.html"
+"Repository" = "https://github.com/anshsingal/trajectree-quimb"
+
 
 [build-system]
 requires = ["hatchling", "hatch-vcs"]
